@@ -21,3 +21,7 @@ upstream-moviebox-tui/
 
 # Environment files
 .env
+
+# Agent skills
+.agents/
+skills-lock.json
