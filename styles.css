@@ -937,10 +937,42 @@ html, body {
   z-index: 500;
 }
 
+.tv-player-view.hw-playing {
+  background-color: transparent !important;
+}
+
+body.hw-playing {
+  background-color: transparent !important;
+}
+
+.av-surface {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 1080px;
+  border: 0;
+  pointer-events: none;
+  z-index: 501;
+}
+
 .tv-video-player {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 1920px;
   height: 1080px;
   object-fit: contain;
+  background: #000;
+  z-index: 502;
+}
+
+.tv-player-view.hw-playing .tv-video-player {
+  display: none !important;
+}
+
+.tv-player-view:not(.hw-playing) .av-surface {
+  display: none !important;
 }
 
 .player-buffering {

@@ -87,6 +87,7 @@ class MovieBoxApp {
       // Settings
       qualityGroup: document.getElementById('setting-quality-group'),
       strategyGroup: document.getElementById('setting-strategy-group'),
+      engineGroup: document.getElementById('setting-engine-group'),
       subtitleGroup: document.getElementById('setting-subtitle-group'),
       providerHealthList: document.getElementById('provider-health-list'),
       btnPingProviders: document.getElementById('btn-ping-providers'),
@@ -156,8 +157,19 @@ class MovieBoxApp {
       onTimeUpdate: (current, duration) => this.handlePlaybackTime(current, duration),
       onDurationChange: (duration) => this.handlePlaybackDuration(duration),
       onStreamSelected: (stream, pool) => this.handleStreamSelected(stream, pool),
+      onEngineChange: (engineType) => this.handleEngineChange(engineType),
       onError: (err) => this.handlePlaybackError(err),
     });
+  }
+
+  handleEngineChange(engineType) {
+    if (engineType === 'avplay') {
+      this.els.playerView.classList.add('hw-playing');
+      document.body.classList.add('hw-playing');
+    } else {
+      this.els.playerView.classList.remove('hw-playing');
+      document.body.classList.remove('hw-playing');
+    }
   }
 
   setupNavigation() {
@@ -209,7 +221,7 @@ class MovieBoxApp {
     // Player Error Controls
     this.els.errorBtnRetry.addEventListener('click', () => {
       this.els.playerErrorOverlay.style.display = 'none';
-      this.playbackAdapter.tryFallbackStream();
+      this.playbackAdapter.retryWithFallback();
     });
     this.els.errorBtnExit.addEventListener('click', () => {
       this.exitPlayer();
@@ -708,6 +720,8 @@ class MovieBoxApp {
     subtitleManager.clear();
     this.els.playerView.style.display = 'none';
     this.els.playerErrorOverlay.style.display = 'none';
+    this.els.playerView.classList.remove('hw-playing');
+    document.body.classList.remove('hw-playing');
 
     // Refresh history screen if active
     if (this.currentScreen === 'history') {
@@ -827,6 +841,23 @@ class MovieBoxApp {
         this.showToast(`Selection strategy set to ${btn.textContent}`);
       };
     });
+
+    // Player Engine buttons
+    if (this.els.engineGroup) {
+      const engineBtns = this.els.engineGroup.querySelectorAll('.btn-choice');
+      engineBtns.forEach((btn) => {
+        if (btn.dataset.engine === (settings.playerEngine || 'auto')) btn.classList.add('active');
+        else btn.classList.remove('active');
+        btn.onclick = () => {
+          engineBtns.forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          const engineVal = btn.dataset.engine;
+          storageManager.updateSettings({ playerEngine: engineVal });
+          this.playbackAdapter.switchEngine(engineVal);
+          this.showToast(`Player engine set to ${btn.textContent}`);
+        };
+      });
+    }
 
     // Subtitle buttons
     const subBtns = this.els.subtitleGroup.querySelectorAll('.btn-choice');

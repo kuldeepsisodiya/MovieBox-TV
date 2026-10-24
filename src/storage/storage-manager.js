@@ -18,6 +18,7 @@ const STORAGE_KEYS = {
 const DEFAULT_SETTINGS = {
   qualityPreference: 'auto', // 'auto', '2160p', '1080p', '720p', '480p'
   selectionStrategy: 'fastest_start', // 'fastest_start', 'best_quality', 'most_reliable'
+  playerEngine: 'auto', // 'auto', 'html5', 'avplay'
   subtitleLanguage: 'off', // 'off', 'en', 'hi', 'auto'
   backendUrl: '', // Optional proxy/backend
   enabledProviders: {

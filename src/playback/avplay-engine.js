@@ -46,15 +46,32 @@ export class AVPlayEngine {
       window.webapis.avplay.open(streamUrl);
       this.state = 'IDLE';
 
+      // Ensure display mode is configured
+      if (typeof window.webapis.avplay.setDisplayMethod === 'function') {
+        try {
+          window.webapis.avplay.setDisplayMethod('PLAYER_DISPLAY_MODE_LETTER_BOX');
+        } catch (modeErr) {
+          logger.warn(TAG, `setDisplayMethod error: ${modeErr.message}`);
+        }
+      }
+
       // Set display rectangle (TV screen layout)
-      window.webapis.avplay.setDisplayRect(displayRect.x, displayRect.y, displayRect.width, displayRect.height);
+      try {
+        window.webapis.avplay.setDisplayRect(displayRect.x, displayRect.y, displayRect.width, displayRect.height);
+      } catch (rectErr) {
+        logger.warn(TAG, `setDisplayRect error: ${rectErr.message}`);
+      }
 
       // Configure headers / streaming properties if needed
       if (headers && Object.keys(headers).length > 0) {
-        const headerStr = Object.entries(headers)
-          .map(([k, v]) => `${k}: ${v}`)
-          .join('\r\n');
-        window.webapis.avplay.setStreamingProperty('CUSTOM_HEADER', headerStr);
+        try {
+          const headerStr = Object.entries(headers)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join('\r\n');
+          window.webapis.avplay.setStreamingProperty('CUSTOM_HEADER', headerStr);
+        } catch (headerErr) {
+          logger.warn(TAG, `setStreamingProperty error: ${headerErr.message}`);
+        }
       }
 
       // Attach official event listeners
@@ -75,8 +92,14 @@ export class AVPlayEngine {
           this.callbacks.onTimeUpdate(this.currentTime);
         },
         onerror: (eventType) => {
-          logger.error(TAG, `AVPlay error: ${eventType}`);
-          this.callbacks.onError(new Error(`AVPlay error: ${eventType}`));
+          let errorMsg = 'AVPlay playback error';
+          if (typeof eventType === 'string') {
+            errorMsg = eventType;
+          } else if (eventType && typeof eventType === 'object') {
+            errorMsg = eventType.message || eventType.name || eventType.type || 'AVPlay unknown error';
+          }
+          logger.error(TAG, `AVPlay error: ${errorMsg}`);
+          this.callbacks.onError(new Error(`AVPlay error: ${errorMsg}`));
         },
         onevent: (eventType, eventData) => {
           logger.debug(TAG, `AVPlay event: ${eventType}`, eventData);
@@ -91,10 +114,22 @@ export class AVPlayEngine {
         },
       });
 
-      // Prepare asynchronously
+      // Prepare asynchronously with timeout guard
       await new Promise((resolve, reject) => {
+        let isSettled = false;
+        const prepareTimeout = setTimeout(() => {
+          if (!isSettled) {
+            isSettled = true;
+            this.state = 'NONE';
+            reject(new Error('AVPlay prepareAsync timed out (10s)'));
+          }
+        }, 10000);
+
         window.webapis.avplay.prepareAsync(
           () => {
+            if (isSettled) return;
+            isSettled = true;
+            clearTimeout(prepareTimeout);
             this.state = 'READY';
             try {
               const durMs = window.webapis.avplay.getDuration();
@@ -116,8 +151,12 @@ export class AVPlayEngine {
             resolve();
           },
           (err) => {
+            if (isSettled) return;
+            isSettled = true;
+            clearTimeout(prepareTimeout);
             this.state = 'NONE';
-            reject(new Error(`AVPlay prepareAsync error: ${JSON.stringify(err)}`));
+            const detail = (err && (err.message || err.name || String(err))) || 'prepareAsync rejected';
+            reject(new Error(`AVPlay prepareAsync error: ${detail}`));
           }
         );
       });

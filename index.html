@@ -177,6 +177,15 @@
             </div>
 
             <div class="setting-row">
+              <label class="setting-label">Player Engine</label>
+              <div class="setting-control-group" id="setting-engine-group">
+                <button class="btn btn-choice focusable active" data-engine="auto" tabindex="0">Auto (Smart Fallback)</button>
+                <button class="btn btn-choice focusable" data-engine="html5" tabindex="0">HTML5 Video</button>
+                <button class="btn btn-choice focusable" data-engine="avplay" tabindex="0">Samsung AVPlay</button>
+              </div>
+            </div>
+
+            <div class="setting-row">
               <label class="setting-label">Default Subtitles</label>
               <div class="setting-control-group" id="setting-subtitle-group">
                 <button class="btn btn-choice focusable active" data-subtitle="off" tabindex="0">Off (Default)</button>
@@ -266,8 +275,11 @@
 
     <!-- Fullscreen TV Playback Screen -->
     <div id="player-view" class="tv-player-view" style="display: none;">
-      <!-- HTML5 Video element (used when AVPlay is not native) -->
+      <!-- HTML5 Video element (used when AVPlay is not native or during fallback) -->
       <video id="tv-video-element" class="tv-video-player" playsinline></video>
+
+      <!-- Samsung Tizen Hardware AVPlay rendering surface -->
+      <object id="avPlayer" class="av-surface" type="application/avplayer" width="1920" height="1080"></object>
 
       <!-- Subtitle Overlay Box -->
       <div id="subtitle-overlay" class="subtitle-overlay"></div>

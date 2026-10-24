@@ -1,6 +1,6 @@
 {
   "name": "moviebox-tizen-tv",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MovieBox TV - Samsung Tizen 4K QLED Web Application",
   "main": "src/app.js",
   "type": "module",

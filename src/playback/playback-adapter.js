@@ -21,11 +21,17 @@ export class PlaybackAdapter {
       onTimeUpdate: () => {},
       onDurationChange: () => {},
       onStreamSelected: () => {},
+      onEngineChange: () => {},
       onError: () => {},
       ...callbacks,
     };
 
     this.engine = null;
+    this.engineType = null;
+    this.html5Engine = null;
+    this.avplayEngine = null;
+    this.avplayDisabledForSession = false;
+
     this.activeMedia = null;
     this.activeStream = null;
     this.candidatePool = [];
@@ -36,10 +42,10 @@ export class PlaybackAdapter {
     this.currentTime = 0;
     this.progressSaveInterval = null;
 
-    this.initEngine();
+    this.initEngines();
   }
 
-  initEngine() {
+  initEngines() {
     const isTizenNative = typeof window !== 'undefined' && Boolean(window.webapis && window.webapis.avplay);
 
     const engineCallbacks = {
@@ -51,15 +57,38 @@ export class PlaybackAdapter {
       onError: (err) => this.handlePlaybackError(err),
     };
 
+    this.html5Engine = new HTML5Engine(this.videoElement, engineCallbacks);
+
     if (isTizenNative) {
-      logger.info(TAG, 'Initializing Samsung AVPlay Hardware Engine');
-      this.engine = new AVPlayEngine(engineCallbacks);
+      logger.info(TAG, 'Samsung AVPlay hardware support detected');
+      this.avplayEngine = new AVPlayEngine(engineCallbacks);
+    } else {
+      logger.info(TAG, 'Standard web environment: HTML5 Video Engine primary');
+    }
+
+    // Default to auto-selected engine
+    this.switchEngine(isTizenNative ? 'avplay' : 'html5');
+  }
+
+  switchEngine(type) {
+    if (this.engine) {
+      try {
+        this.engine.stopAndClose();
+      } catch {}
+    }
+
+    if (type === 'avplay' && this.avplayEngine && !this.avplayDisabledForSession) {
+      this.engine = this.avplayEngine;
       this.engineType = 'avplay';
     } else {
-      logger.info(TAG, 'Initializing HTML5 Video Fallback Engine');
-      this.engine = new HTML5Engine(this.videoElement, engineCallbacks);
+      this.engine = this.html5Engine;
       this.engineType = 'html5';
     }
+
+    if (this.callbacks.onEngineChange) {
+      this.callbacks.onEngineChange(this.engineType);
+    }
+    logger.info(TAG, `Active playback engine set to: ${this.engineType.toUpperCase()}`);
   }
 
   /**
@@ -98,11 +127,27 @@ export class PlaybackAdapter {
     await this.playCandidate(this.activeStream, resumePoint);
   }
 
-  async playCandidate(stream, startPosition = 0) {
+  async playCandidate(stream, startPosition = 0, preferredEngineType = null) {
     logger.info(TAG, `Attempting playback with stream: ${stream.title || stream.url} (${stream.quality})`);
     this.activeStream = stream;
     this.callbacks.onStreamSelected(stream, this.candidatePool);
     this.handleBuffering(true);
+
+    const settings = storageManager.getSettings();
+    let targetEngine = preferredEngineType;
+
+    if (!targetEngine) {
+      if (settings.playerEngine === 'html5' || !this.avplayEngine || this.avplayDisabledForSession) {
+        targetEngine = 'html5';
+      } else if (settings.playerEngine === 'avplay') {
+        targetEngine = 'avplay';
+      } else {
+        // 'auto' mode: default to avplay if available, else html5
+        targetEngine = this.avplayEngine && !this.avplayDisabledForSession ? 'avplay' : 'html5';
+      }
+    }
+
+    this.switchEngine(targetEngine);
 
     try {
       await this.engine.open(stream.url, {
@@ -115,7 +160,28 @@ export class PlaybackAdapter {
       this.callbacks.onStateChange('playing');
       this.startProgressSaveLoop();
     } catch (err) {
-      logger.error(TAG, `Stream playback error for ${stream.url}: ${err.message}`);
+      logger.error(TAG, `Playback error on ${this.engineType} for ${stream.url}: ${err.message}`);
+
+      // If AVPlay failed in Auto mode, seamlessly attempt HTML5 on this exact same stream candidate
+      if (this.engineType === 'avplay' && settings.playerEngine !== 'avplay') {
+        logger.warn(TAG, `AVPlay failed to open stream. Seamlessly falling back to HTML5 Video for ${stream.quality}...`);
+        this.avplayDisabledForSession = true;
+        this.switchEngine('html5');
+        try {
+          await this.engine.open(stream.url, {
+            headers: stream.headers || {},
+            startPositionSeconds: startPosition,
+          });
+          this.engine.play();
+          this.isPlaying = true;
+          this.callbacks.onStateChange('playing');
+          this.startProgressSaveLoop();
+          return;
+        } catch (html5Err) {
+          logger.error(TAG, `HTML5 fallback also failed for ${stream.url}: ${html5Err.message}`);
+        }
+      }
+
       recordPlaybackFailure(stream.url);
       await this.tryFallbackStream();
     }
@@ -134,6 +200,16 @@ export class PlaybackAdapter {
       this.isPlaying = false;
       this.callbacks.onStateChange('error');
       this.callbacks.onError(new Error('Unable to play any available stream for this title. Please try another provider or resolution.'));
+    }
+  }
+
+  async retryWithFallback() {
+    logger.info(TAG, 'User requested fallback retry. Forcing HTML5 engine and restarting candidate pool.');
+    this.avplayDisabledForSession = true;
+    this.candidateIndex = 0;
+    const stream = this.candidatePool[0];
+    if (stream) {
+      await this.playCandidate(stream, 0, 'html5');
     }
   }
 
@@ -208,12 +284,34 @@ export class PlaybackAdapter {
     this.callbacks.onStateChange('ended');
   }
 
-  handlePlaybackError(err) {
-    logger.error(TAG, `Engine reported error: ${err.message}`);
+  async handlePlaybackError(err) {
+    logger.error(TAG, `Engine (${this.engineType}) reported error: ${err.message}`);
+    const settings = storageManager.getSettings();
+
+    // If AVPlay failed at runtime in auto mode, immediately switch candidate to HTML5 video
+    if (this.engineType === 'avplay' && settings.playerEngine !== 'avplay' && this.activeStream) {
+      logger.warn(TAG, 'AVPlay failed at runtime. Switching active stream to HTML5 video fallback...');
+      this.avplayDisabledForSession = true;
+      this.switchEngine('html5');
+      const resumePos = this.currentTime;
+      try {
+        await this.engine.open(this.activeStream.url, {
+          headers: this.activeStream.headers || {},
+          startPositionSeconds: resumePos,
+        });
+        this.engine.play();
+        this.isPlaying = true;
+        this.callbacks.onStateChange('playing');
+        return;
+      } catch (html5Err) {
+        logger.error(TAG, `HTML5 fallback also failed: ${html5Err.message}`);
+      }
+    }
+
     if (this.activeStream) {
       recordPlaybackFailure(this.activeStream.url);
     }
-    this.tryFallbackStream();
+    await this.tryFallbackStream();
   }
 
   startProgressSaveLoop() {
@@ -221,6 +319,9 @@ export class PlaybackAdapter {
     this.progressSaveInterval = setInterval(() => {
       this.saveProgressNow();
     }, 5000); // persist every 5 seconds
+    if (this.progressSaveInterval && typeof this.progressSaveInterval.unref === 'function') {
+      this.progressSaveInterval.unref();
+    }
   }
 
   stopProgressSaveLoop() {
