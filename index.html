@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920, height=1080, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>MovieBox TV</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="tv-body">
+  <div id="app" class="tv-app-root">
+    
+    <!-- Top TV Navigation Bar -->
+    <header id="main-nav" class="tv-navbar" role="navigation" aria-label="Main Navigation">
+      <div class="nav-brand">
+        <div class="brand-logo-badge">MB</div>
+        <span class="brand-title">MOVIEBOX <span class="brand-sub">TV</span></span>
+      </div>
+      <nav class="nav-links">
+        <button id="nav-btn-home" class="nav-item focusable active" data-screen="home" tabindex="0">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+          <span>Home</span>
+        </button>
+        <button id="nav-btn-search" class="nav-item focusable" data-screen="search" tabindex="0">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <span>Search</span>
+        </button>
+        <button id="nav-btn-favorites" class="nav-item focusable" data-screen="favorites" tabindex="0">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          <span>Favorites</span>
+        </button>
+        <button id="nav-btn-history" class="nav-item focusable" data-screen="history" tabindex="0">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+          <span>History</span>
+        </button>
+        <button id="nav-btn-settings" class="nav-item focusable" data-screen="settings" tabindex="0">
+          <svg class="nav-icon" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+          <span>Settings</span>
+        </button>
+      </nav>
+      <div class="nav-status-indicator">
+        <span class="status-dot online"></span>
+        <span class="status-label">4K QLED READY</span>
+      </div>
+    </header>
+
+    <!-- Main Screens Container -->
+    <main id="screens-container" class="tv-screens-viewport">
+
+      <!-- Screen: Home -->
+      <section id="screen-home" class="tv-screen active">
+        <!-- Hero Featured Billboard -->
+        <div id="hero-billboard" class="hero-billboard">
+          <div class="hero-backdrop-gradient"></div>
+          <div id="hero-backdrop-img" class="hero-backdrop-image"></div>
+          <div class="hero-content">
+            <div class="hero-badge-row">
+              <span class="badge badge-accent">FEATURED PREMIERE</span>
+              <span id="hero-resolution-badge" class="badge badge-gold">4K ULTRA HD</span>
+              <span id="hero-rating-badge" class="badge badge-glass">IMDB 8.4</span>
+            </div>
+            <h1 id="hero-title" class="hero-title">Loading Featured Movie...</h1>
+            <p id="hero-synopsis" class="hero-synopsis">Connecting to high-speed verified streaming sources...</p>
+            <div class="hero-actions">
+              <button id="hero-play-btn" class="btn btn-primary btn-large focusable" tabindex="0">
+                <svg class="btn-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <span>Play Now</span>
+              </button>
+              <button id="hero-details-btn" class="btn btn-secondary btn-large focusable" tabindex="0">
+                <svg class="btn-icon" viewBox="0 0 24 24"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                <span>Details</span>
+              </button>
+              <button id="hero-fav-btn" class="btn btn-glass btn-large focusable" tabindex="0">
+                <svg class="btn-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                <span>Watchlist</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Catalogue Carousels Section -->
+        <div id="catalog-rows-container" class="catalog-rows-section"></div>
+      </section>
+
+      <!-- Screen: Search -->
+      <section id="screen-search" class="tv-screen">
+        <div class="search-layout">
+          <!-- Left Column: Search Keyboard & Provider Status -->
+          <div class="search-sidebar">
+            <div class="search-input-box">
+              <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+              <input id="search-query-display" type="text" readonly placeholder="Enter title to search all providers..." class="search-input-field">
+            </div>
+
+            <!-- Virtual TV On-Screen Keyboard -->
+            <div id="tv-virtual-keyboard" class="tv-keyboard-grid">
+              <!-- Keyboard keys populated by JavaScript -->
+            </div>
+
+            <!-- Provider Aggregation Status Bar -->
+            <div class="search-provider-statuses">
+              <div class="status-header">Parallel Discovery Status:</div>
+              <div id="search-provider-pills" class="provider-pills-row">
+                <!-- Pills populated dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Search Results Grid -->
+          <div class="search-results-area">
+            <div class="results-header-row">
+              <h2 id="search-results-title" class="results-title">Search Results</h2>
+              <span id="search-results-count" class="results-count-badge">0 titles</span>
+            </div>
+            <div id="search-results-grid" class="search-results-grid">
+              <div class="empty-state">
+                <svg class="empty-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                <div class="empty-text">Enter letters using the remote to search all configured providers concurrently.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Screen: Favorites -->
+      <section id="screen-favorites" class="tv-screen">
+        <div class="screen-header">
+          <h1 class="screen-title">My Favorites & Watchlist</h1>
+          <p class="screen-subtitle">Locally persisted titles ready for instant streaming</p>
+        </div>
+        <div id="favorites-grid" class="media-grid"></div>
+      </section>
+
+      <!-- Screen: History -->
+      <section id="screen-history" class="tv-screen">
+        <div class="screen-header-with-actions">
+          <div>
+            <h1 class="screen-title">Watch History</h1>
+            <p class="screen-subtitle">Resume playback with saved positions across all providers</p>
+          </div>
+          <button id="clear-history-btn" class="btn btn-danger focusable" tabindex="0">
+            <svg class="btn-icon" viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+            <span>Clear History</span>
+          </button>
+        </div>
+        <div id="history-grid" class="media-grid"></div>
+      </section>
+
+      <!-- Screen: Settings & Diagnostics -->
+      <section id="screen-settings" class="tv-screen">
+        <div class="screen-header">
+          <h1 class="screen-title">Preferences & Provider Configuration</h1>
+          <p class="screen-subtitle">Fine-tune streaming strategies, playback quality, and live provider health</p>
+        </div>
+        
+        <div class="settings-grid-layout">
+          <!-- Quality & Strategy Settings Card -->
+          <div class="settings-card">
+            <h3 class="card-heading">Playback & Quality Engine</h3>
+            <div class="setting-row">
+              <label class="setting-label">Quality Mode</label>
+              <div class="setting-control-group" id="setting-quality-group">
+                <button class="btn btn-choice focusable active" data-quality="auto" tabindex="0">Auto (Best)</button>
+                <button class="btn btn-choice focusable" data-quality="2160p" tabindex="0">4K (2160p)</button>
+                <button class="btn btn-choice focusable" data-quality="1080p" tabindex="0">1080p FHD</button>
+                <button class="btn btn-choice focusable" data-quality="720p" tabindex="0">720p HD</button>
+              </div>
+            </div>
+
+            <div class="setting-row">
+              <label class="setting-label">Selection Strategy</label>
+              <div class="setting-control-group" id="setting-strategy-group">
+                <button class="btn btn-choice focusable active" data-strategy="fastest_start" tabindex="0">Fastest Start</button>
+                <button class="btn btn-choice focusable" data-strategy="best_quality" tabindex="0">Best Quality</button>
+                <button class="btn btn-choice focusable" data-strategy="most_reliable" tabindex="0">Most Reliable</button>
+              </div>
+            </div>
+
+            <div class="setting-row">
+              <label class="setting-label">Default Subtitles</label>
+              <div class="setting-control-group" id="setting-subtitle-group">
+                <button class="btn btn-choice focusable active" data-subtitle="off" tabindex="0">Off (Default)</button>
+                <button class="btn btn-choice focusable" data-subtitle="en" tabindex="0">English</button>
+                <button class="btn btn-choice focusable" data-subtitle="hi" tabindex="0">हिन्दी (Hindi)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Provider Health & Enabled Toggles Card -->
+          <div class="settings-card">
+            <div class="card-heading-row">
+              <h3 class="card-heading">Configured Streaming Providers</h3>
+              <button id="btn-ping-providers" class="btn btn-secondary btn-small focusable" tabindex="0">
+                <svg class="btn-icon" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+                <span>Health Ping</span>
+              </button>
+            </div>
+            <div id="provider-health-list" class="provider-health-list">
+              <!-- Dynamically populated with status table -->
+            </div>
+          </div>
+
+          <!-- TV Diagnostics & Log Screen Card -->
+          <div class="settings-card full-width">
+            <div class="card-heading-row">
+              <h3 class="card-heading">Tizen TV Diagnostics & Console Log</h3>
+              <button id="btn-clear-logs" class="btn btn-glass btn-small focusable" tabindex="0">Clear Log</button>
+            </div>
+            <div id="diagnostics-log-viewer" class="diagnostics-log-box"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Details Modal / Overlay -->
+    <div id="details-modal" class="tv-modal" role="dialog" aria-hidden="true">
+      <div class="modal-backdrop"></div>
+      <div class="modal-container">
+        <div class="details-layout">
+          <div class="details-poster-col">
+            <img id="detail-poster-img" class="details-poster" src="" alt="Poster">
+          </div>
+          <div class="details-info-col">
+            <div class="details-badges">
+              <span id="detail-provider-badge" class="badge badge-accent">Provider</span>
+              <span id="detail-res-badge" class="badge badge-gold">4K UHD</span>
+              <span id="detail-rating-badge" class="badge badge-glass">IMDB 8.1</span>
+              <span id="detail-year-badge" class="badge badge-glass">2012</span>
+            </div>
+            <h1 id="detail-title" class="detail-title">Movie Title</h1>
+            <p id="detail-tagline" class="detail-tagline">Tagline goes here</p>
+            <p id="detail-description" class="detail-description">Full synopsis...</p>
+            <div class="detail-meta-list">
+              <div><strong class="meta-label">Director:</strong> <span id="detail-director">N/A</span></div>
+              <div><strong class="meta-label">Stars:</strong> <span id="detail-stars">N/A</span></div>
+              <div><strong class="meta-label">Genres:</strong> <span id="detail-genres">N/A</span></div>
+            </div>
+
+            <!-- Stream Selection Row -->
+            <div class="stream-selection-section">
+              <div class="section-subheading">Available Stream Candidates:</div>
+              <div id="detail-streams-row" class="streams-horizontal-list">
+                <!-- Stream candidate cards -->
+              </div>
+            </div>
+
+            <!-- Modal Action Buttons -->
+            <div class="details-action-buttons">
+              <button id="modal-play-btn" class="btn btn-primary btn-large focusable" tabindex="0">
+                <svg class="btn-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                <span>Play Movie</span>
+              </button>
+              <button id="modal-fav-btn" class="btn btn-secondary btn-large focusable" tabindex="0">
+                <svg class="btn-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                <span id="modal-fav-label">Add Favorite</span>
+              </button>
+              <button id="modal-close-btn" class="btn btn-glass btn-large focusable" tabindex="0">
+                <span>Close (Back)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fullscreen TV Playback Screen -->
+    <div id="player-view" class="tv-player-view" style="display: none;">
+      <!-- HTML5 Video element (used when AVPlay is not native) -->
+      <video id="tv-video-element" class="tv-video-player" playsinline></video>
+
+      <!-- Subtitle Overlay Box -->
+      <div id="subtitle-overlay" class="subtitle-overlay"></div>
+
+      <!-- Playback Buffering Spinner -->
+      <div id="player-buffering-indicator" class="player-buffering" style="display: none;">
+        <div class="spinner"></div>
+        <div class="buffering-text">Buffering Stream...</div>
+      </div>
+
+      <!-- Player On-Screen Display (OSD) Controls -->
+      <div id="player-osd" class="player-osd active">
+        <!-- Top bar: Title & Stream metadata -->
+        <div class="osd-top-bar">
+          <div class="osd-title-group">
+            <h2 id="osd-media-title" class="osd-title">Title</h2>
+            <div id="osd-stream-metadata" class="osd-subtitle">4K UHD • Blender CDN Direct • MP4 H.264</div>
+          </div>
+          <button id="osd-btn-close" class="btn btn-glass btn-circle focusable" tabindex="0" title="Exit Player">
+            <svg class="btn-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          </button>
+        </div>
+
+        <!-- Center Notification (Seeking / Volume / Status) -->
+        <div id="osd-status-flash" class="osd-status-flash" style="opacity: 0;"></div>
+
+        <!-- Bottom bar: Timeline, Timecodes, Controls -->
+        <div class="osd-bottom-bar">
+          <div class="osd-progress-row">
+            <span id="osd-time-current" class="time-label">00:00</span>
+            <div id="osd-timeline-track" class="progress-track">
+              <div id="osd-progress-fill" class="progress-fill" style="width: 0%;"></div>
+            </div>
+            <span id="osd-time-duration" class="time-label">00:00</span>
+          </div>
+
+          <div class="osd-controls-row">
+            <button id="osd-btn-rewind" class="btn btn-secondary btn-control focusable" tabindex="0" title="Rewind 10s">
+              <svg class="btn-icon" viewBox="0 0 24 24"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/></svg>
+              <span>-10s</span>
+            </button>
+            <button id="osd-btn-playpause" class="btn btn-primary btn-control focusable" tabindex="0" title="Play/Pause">
+              <svg id="osd-icon-pause" class="btn-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+              <svg id="osd-icon-play" class="btn-icon" style="display: none;" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              <span id="osd-playpause-text">Pause</span>
+            </button>
+            <button id="osd-btn-forward" class="btn btn-secondary btn-control focusable" tabindex="0" title="Forward 10s">
+              <svg class="btn-icon" viewBox="0 0 24 24"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
+              <span>+10s</span>
+            </button>
+            <button id="osd-btn-quality" class="btn btn-glass btn-control focusable" tabindex="0">
+              <svg class="btn-icon" viewBox="0 0 24 24"><path d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 11H9.5v-2h-2v2H6V9h1.5v2.5h2V9H11v6zm7-1c0 .55-.45 1-1 1h-4V9h4c.55 0 1 .45 1 1v4zm-1.5-2.5h-2v1.5h2v-1.5z"/></svg>
+              <span id="osd-quality-label">Quality: Auto</span>
+            </button>
+            <button id="osd-btn-subtitles" class="btn btn-glass btn-control focusable" tabindex="0">
+              <svg class="btn-icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-7 7h-2v-.5H9.5v3H11V13h2v1.5h-3.5c-.83 0-1.5-.67-1.5-1.5v-3c0-.83.67-1.5 1.5-1.5h3.5V11zm6 0h-2v-.5h-1.5v3H17V13h2v1.5h-3.5c-.83 0-1.5-.67-1.5-1.5v-3c0-.83.67-1.5 1.5-1.5H19V11z"/></svg>
+              <span id="osd-subtitle-label">Subtitles: Off</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Player Error & Recovery Screen -->
+      <div id="player-error-overlay" class="player-error-overlay" style="display: none;">
+        <div class="error-card">
+          <svg class="error-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+          <h2 class="error-title">Stream Playback Failed</h2>
+          <p id="player-error-message" class="error-message">The selected video stream could not be loaded.</p>
+          <div class="error-actions">
+            <button id="error-btn-retry" class="btn btn-primary btn-large focusable" tabindex="0">Try Fallback Stream</button>
+            <button id="error-btn-exit" class="btn btn-secondary btn-large focusable" tabindex="0">Exit to Details</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Overlay -->
+    <div id="tv-toast" class="tv-toast" role="status" aria-live="polite">
+      <span id="tv-toast-message">Notification</span>
+    </div>
+
+  </div>
+
+  <!-- Main Application Entry Module -->
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>

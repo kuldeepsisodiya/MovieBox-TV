@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+.npm
+
+# Build outputs
+build/
+dist/
+*.wgt
+.manifest.tmp
+.delta.lst
+
+# OS & IDE metadata
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Upstream Reference
+upstream-moviebox-tui/
+
+# Environment files
+.env
