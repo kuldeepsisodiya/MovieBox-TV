@@ -16,6 +16,8 @@ import { formatTimeCode, formatResolution, escapeHtml } from './utils/formatters
 
 const TAG = 'MovieBoxApp';
 
+const POSTER_FALLBACK_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 260 380'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%231a1e29'/%3E%3Cstop offset='100%25' stop-color='%230b0d14'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='260' height='380' fill='url(%23g)'/%3E%3Crect x='105' y='145' width='50' height='50' rx='10' fill='%23e50914' opacity='0.25'/%3E%3Cpath d='M123 160l18 10-18 10z' fill='%23e50914'/%3E%3Ctext x='130' y='225' font-family='sans-serif' font-size='14' font-weight='700' fill='%23ffffff' text-anchor='middle' opacity='0.6' letter-spacing='2'%3EMOVIEBOX%3C/text%3E%3C/svg%3E";
+
 class MovieBoxApp {
   constructor() {
     this.currentScreen = 'home';
@@ -414,11 +416,11 @@ class MovieBoxApp {
     card.className = 'poster-card focusable';
     card.setAttribute('tabindex', '0');
 
-    const poster = item.posterUrl || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800';
+    const poster = item.posterUrl || POSTER_FALLBACK_SVG;
     const resolution = item.id.includes('4k') || item.id.includes('tears') || item.id.includes('bunny') ? '4K UHD' : '1080p';
 
     card.innerHTML = `
-      <img class="poster-card-img" src="${escapeHtml(poster)}" alt="${escapeHtml(item.title)}" loading="lazy" onerror="this.onerror=null;this.src='icon.png';">
+      <img class="poster-card-img" src="${escapeHtml(poster)}" alt="${escapeHtml(item.title)}" loading="lazy" onerror="this.onerror=null;this.src='${POSTER_FALLBACK_SVG}';">
       <div class="poster-card-overlay">
         <h3 class="poster-card-title">${escapeHtml(item.title)}</h3>
         <div class="poster-card-meta">
@@ -557,8 +559,8 @@ class MovieBoxApp {
 
     this.els.detailTitle.textContent = mediaItem.title;
     this.els.detailTagline.textContent = mediaItem.tagline || '';
-    this.els.detailDesc.textContent = mediaItem.description || 'No detailed synopsis provided.';
-    this.els.detailPoster.src = mediaItem.posterUrl || 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800';
+    this.els.detailPoster.src = mediaItem.posterUrl || POSTER_FALLBACK_SVG;
+    this.els.detailPoster.onerror = () => { this.els.detailPoster.src = POSTER_FALLBACK_SVG; };
 
     this.els.detailProviderBadge.textContent = mediaItem.providerLabel || 'Unified Provider';
     this.els.detailResBadge.textContent = '4K UHD';

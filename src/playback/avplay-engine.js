@@ -43,8 +43,28 @@ export class AVPlayEngine {
     try {
       logger.info(TAG, `Opening AVPlay stream: ${streamUrl}`);
       this.currentUrl = streamUrl;
+
+      // Ensure Samsung AVPlay rendering surface exists in DOM
+      let surface = document.getElementById('avPlayer');
+      if (!surface && typeof document !== 'undefined') {
+        surface = document.createElement('object');
+        surface.id = 'avPlayer';
+        surface.type = 'application/avplayer';
+        surface.className = 'av-surface';
+        const playerView = document.getElementById('player-view') || document.body;
+        playerView.appendChild(surface);
+      }
+
       window.webapis.avplay.open(streamUrl);
       this.state = 'IDLE';
+
+      // Configure 4K UHD hardware decoding mode for Samsung 4K TV
+      try {
+        window.webapis.avplay.setStreamingProperty('SET_MODE_4K', 'TRUE');
+        logger.info(TAG, 'Enabled 4K UHD hardware decoding mode on Samsung AVPlay');
+      } catch (e) {
+        logger.debug(TAG, `SET_MODE_4K skipped: ${e.message}`);
+      }
 
       // Ensure display mode is configured
       if (typeof window.webapis.avplay.setDisplayMethod === 'function') {
@@ -55,9 +75,9 @@ export class AVPlayEngine {
         }
       }
 
-      // Set display rectangle (TV screen layout)
+      // Set display rectangle (Always 1920x1080 normalized base grid on Samsung TV)
       try {
-        window.webapis.avplay.setDisplayRect(displayRect.x, displayRect.y, displayRect.width, displayRect.height);
+        window.webapis.avplay.setDisplayRect(0, 0, 1920, 1080);
       } catch (rectErr) {
         logger.warn(TAG, `setDisplayRect error: ${rectErr.message}`);
       }
