@@ -4,23 +4,24 @@
         id="http://moviebox.tv/MovieBoxTV"
         version="1.0.0"
         viewmodes="maximized">
-  <tizen:application id="org.moviebox.tv.MovieBoxTV" package="org.moviebox.tv" required_version="3.0"/>
+  <tizen:application id="mbxtv1080p.MovieBoxTV" package="mbxtv1080p" required_version="2.3"/>
   <content src="index.html"/>
   <name>MovieBox TV</name>
   <description>MovieBox Samsung Tizen TV Edition - Unified Multi-Provider Streaming</description>
   <icon src="icon.png"/>
-  <tizen:profile name="tv"/>
-  <access origin="*" subdomains="true"/>
+  <feature name="http://tizen.org/feature/screen.size.normal.1080.1920"/>
   <tizen:privilege name="http://tizen.org/privilege/internet"/>
   <tizen:privilege name="http://tizen.org/privilege/tv.inputdevice"/>
   <tizen:privilege name="http://tizen.org/privilege/application.launch"/>
-  <feature name="http://tizen.org/feature/screen.size.normal.1080.1920"/>
+  <access origin="*" subdomains="true"/>
+  <tizen:allow-navigation>*</tizen:allow-navigation>
+  <tizen:profile name="tv-samsung"/>
   <tizen:metadata key="http://samsung.com/tv/metadata/prelaunch.support" value="true"/>
   <tizen:metadata key="http://samsung.com/tv/metadata/use.preview" value="true"/>
-  <tizen:setting background-support="disable"
+  <tizen:setting screen-orientation="landscape"
                  context-menu="enable"
+                 background-support="disable"
                  encryption="disable"
-                 hwkey-event="enable"
                  install-location="auto"
-                 screen-orientation="landscape"/>
+                 hwkey-event="enable"/>
 </widget>

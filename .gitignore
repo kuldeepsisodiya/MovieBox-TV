@@ -14,6 +14,7 @@ dist/
 Thumbs.db
 .idea/
 .vscode/
+.project
 
 # Upstream Reference
 upstream-moviebox-tui/
